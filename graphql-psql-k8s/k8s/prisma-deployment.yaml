@@ -1,0 +1,41 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose convert -f docker-compose.yml -o k8s
+    kompose.version: 1.15.0 (e3cd4d4)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: prisma
+  name: prisma
+spec:
+  replicas: 1
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        io.kompose.service: prisma
+    spec:
+      containers:
+      - env:
+        - name: PRISMA_CONFIG
+          value: |
+            port: 4466
+            # uncomment the next line and provide the env var PRISMA_MANAGEMENT_API_SECRET=my-secret to activate cluster security
+            # managementApiSecret: my-secret
+            databases:
+              default:
+                connector: postgres
+                host: postgres
+                port: 5432
+                user: prisma
+                password: prisma
+                migrations: true
+        image: prismagraphql/prisma:1.9
+        name: prisma
+        ports:
+        - containerPort: 4466
+        resources: {}
+      restartPolicy: Always
+status: {}
